@@ -4,6 +4,7 @@ import counterView from './view/counter.js';
 import filtersView from './view/filters.js';
 
 import registry from './registry.js';
+import applyDiff from './applyDiff.js';
 
 registry.add('todos', todosView);
 registry.add('counter', counterView);
@@ -14,10 +15,13 @@ const state = {
     currentFilter: 'All',
 }
 
+const render = () => {
+    window.requestAnimationFrame(() => {
+        const main = document.querySelector('.todoapp')
+        const newMain = registry.renderRoot(main, state);
 
-window.requestAnimationFrame(() => {
-    const main = document.querySelector('.todoapp')
-    const newMain = registry.renderRoot(main, state);
+        applyDiff(document.body, main, newMain)
+    });
+}
 
-    main.replaceWith(newMain)
-});
+render();
