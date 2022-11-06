@@ -32,19 +32,12 @@
         <section class="main">
           <input id="toggle-all" class="toggle-all" type="checkbox" />
           <label for="toggle-all">Mark all as complete</label>
-          <ul class="todo-list" data-component="todos"></ul>
+          <todomvc-list></todomvc-list>
         </section>
-        <footer class="footer">
-          <span class="todo-count" data-component="counter">1 Item Left</span>
-          <ul class="filters" data-component="filters">
-            <li><a href="#/">All</a></li>
-            <li><a href="#/active">Active</a></li>
-            <li><a href="#/completed">Completed</a></li>
-          </ul>
-          <button class="clear-completed">Clear completed</button>
-        </footer>
+        <todomvc-footer></todomvc-footer>
       </section>
     </template>
+    <todomvc-app></todomvc-app>
     <div id="root">
         <div data-component="app"></div>
     </div>

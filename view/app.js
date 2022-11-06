@@ -1,28 +1,66 @@
-let template;
+import { EVENTS } from './list.js'
 
-const getTemplate = () => {
-    if (!template) {
-        template = document.getElementById('todo-app');
+export default class App extends HTMLElement {
+  constructor () {
+    super()
+    this.state = {
+      todos: [],
+      filter: 'All'
     }
 
-    return template.content.firstElementChild.cloneNode(true);
-}
-
-const addEvents = (targetElement, events) => {
-    targetElement
-      .querySelector('.new-todo')
-      .addEventListener('keypress', e => {
-        if (e.key === 'Enter') {
-          events.addItem(e.target.value)
-          e.target.value = ''
-        }
-      })
+    this.template = document
+      .getElementById('todo-app')
   }
 
-export default (targetElement, state, events) => {
-    const newApp = targetElement.cloneNode(true);
-    newApp.innerHTML = '';
-    newApp.appendChild(getTemplate());
-    addEvents(newApp, events);
-    return newApp;
+  deleteItem (index) {
+    this.state.todos.splice(index, 1)
+    this.syncAttributes()
+  }
+
+  addItem (text) {
+    this.state.todos.push({
+      text,
+      completed: false
+    })
+    this.syncAttributes()
+  }
+
+  syncAttributes () {
+    this.list.todos = this.state.todos
+    this.footer.todos = this.state.todos
+    this.footer.filter = this.state.filter
+  }
+
+  connectedCallback () {
+    window.requestAnimationFrame(() => {
+      const content = this.template
+        .content
+        .firstElementChild
+        .cloneNode(true)
+
+      this.appendChild(content)
+
+      this
+        .querySelector('.new-todo')
+        .addEventListener('keypress', e => {
+          if (e.key === 'Enter') {
+            this.addItem(e.target.value)
+            e.target.value = ''
+          }
+        })
+
+      this.footer = this
+        .querySelector('todomvc-footer')
+
+      this.list = this.querySelector('todomvc-list')
+      this.list.addEventListener(
+        EVENTS.DELETE_ITEM,
+        e => {
+          this.deleteItem(e.detail.index)
+        }
+      )
+
+      this.syncAttributes()
+    })
+  }
 }
